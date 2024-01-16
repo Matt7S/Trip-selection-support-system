@@ -2,15 +2,15 @@ import pandas as pd
 from typing import List
 import os
 
-def get_data_from_database():
+def get_data_from_database(show_files_head=False):
     """
     Retrieves travel-related data from an Excel file and organizes it into separate lists for easier analysis.
 
     Returns:
-        List[str]: city_option_headers - List of column headers as strings, representing city information (e.g., city, country).
-        List[List[int]]: city_options - Nested list of values, each sublist contains details for a specific city. 
-        List[str]: travel_metric_headers - List of column headers as strings, representing various travel metrics (e.g., cost, comfort, safety).
-        List[List[int]]: travel_metrics - Nested list of values, each sublist contains the metrics for a specific city. 
+        List[str]: data_info_headers - List of column headers as strings, representing city information [ID_header, header1, header2, etc].
+        List[List[int]]: data_info - Nested list of values, each sublist contains details for a specific city [ID, data_country, data_city, etc]. 
+        List[str]: data_headers - List of column headers as strings, representing various travel metrics [ID_header, header1, header2, header3, etc].
+        List[List[int]]: travel_metrics - Nested list of values, each sublist contains the metrics for a specific city [ID, data_safety, data_comfort, data, etc]. 
     """
 
     # Get the current working directory to construct the file path
@@ -24,31 +24,33 @@ def get_data_from_database():
 
     # Check if the file exists before attempting to read it
     if os.path.isfile(file_path):
-        # Load the Excel file into a pandas DataFrame
-        df = pd.read_excel(file_path)
-        # Optionally, print the first few rows to check the data
-        # print(df.head())
+        # Load the Excel file into a pandas DataFrame for the "data" sheet
+        df_data = pd.read_excel(file_path, sheet_name="data")
+
+        # Load the Excel file into a pandas DataFrame for the "data_info" sheet
+        df_data_info = pd.read_excel(file_path, sheet_name="data_info")
+
+        # Optionally, print the first few rows of both DataFrames to check the data
+        if show_files_head:
+            print("Data sheet:")
+            print(df_data.head())
+
+            print("Data_info sheet:")
+            print(df_data_info.head())
     else:
         # If the file is not found, print an error message
         print(f"File does not exist: {file_path}")
         return
 
-    # Define the index where city data ends and travel metric data begins
-    city_data_start_index = 2
+    # Extract column headers from the DataFrames and data
+    data_info_headers = df_data_info.columns.tolist()
+    data_info: List[List[any]] = df_data_info.iloc[:,:].values.tolist()
 
-    # Extract column headers from the DataFrame
-    column_headers = df.columns.tolist()
-
-    # Split the headers into city information headers and travel metric headers
-    city_option_headers: List[str] = column_headers[:city_data_start_index]
-    travel_metric_headers: List[str] = column_headers[city_data_start_index:]
-
-    # Split the DataFrame into two parts: city information and travel metrics
-    city_options: List[List[str]] = df.iloc[:, :city_data_start_index].values.tolist()
-    travel_metrics: List[List[int]] = df.iloc[:, city_data_start_index:].values.tolist()
+    data_headers = df_data.columns.tolist()
+    data: List[List[int]] = df_data.iloc[:, :].values.tolist()
 
     # Return the organized data
-    return city_option_headers, city_options, travel_metric_headers, travel_metrics
+    return data_info_headers, data_info, data_headers, data
 
 # Main function execution
 if __name__ == "__main__":
