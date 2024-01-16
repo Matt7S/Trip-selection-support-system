@@ -9,7 +9,7 @@ def topsis(data: List[List[int]], lower_limits: List, upper_limits: List, weight
     number_of_criteria = len(data[0]) -1
 
     # Checking the correctness of sizes
-    if all(len(actual_list)  == number_of_criteria for actual_list in [lower_limits, upper_limits, weight_vector, benefit_attributes]):
+    if all(len(actual_list) == number_of_criteria for actual_list in [lower_limits, upper_limits, weight_vector, benefit_attributes]):
 
         # Establishing a list of compatible alternatives
         compatible_alternatives = [1 for i in range(number_of_alternatives)]
@@ -63,7 +63,7 @@ def topsis(data: List[List[int]], lower_limits: List, upper_limits: List, weight
         for i in range(new_number_of_alternatives):
             scoring_factor.append(distance_from_anti_ideal[i] / (distance_from_ideal[i] + distance_from_anti_ideal[i]))
         merged = list(zip(scoring_factor, compatible_id))
-        _, result = zip(*sorted(merged, key=lambda x: x[0]))
+        _, result = zip(*sorted(merged, key=lambda x: x[0], reverse=True))
         result = list(result)
         return result
     else:
