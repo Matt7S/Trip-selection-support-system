@@ -44,7 +44,7 @@ if __name__ == "__main__":
             if selected_method == 'Topsis':
                 result_ = topsis.topsis(r[3], lower_limits_, upper_limits_, weight_vector_normalized, benefit_attributes_)
             elif selected_method == 'RSM':
-                result_ = rsm.rsm(r[3], lower_limits_, upper_limits_, weight_vector_normalized)
+                result_ = rsm.rsm(r[3], lower_limits_, upper_limits_, weight_vector_normalized, benefit_attributes_)
 
             text = ""
             for i in range(len(result_)):
