@@ -308,12 +308,25 @@ if __name__ == "__main__":
     root = tk.Tk()
     root.title("Systemy Wspomagania Decyzji")
 
+    description_frame = tk.Frame(root)
+    description_frame.grid(row=0, column=0, padx=5, pady=5)
+    description_1 = tk.Label(description_frame, text="Witamy w systemie wspomagania decyzji w wyborze kierunku wakacji!", font=("Helvetica", 16, "bold"))
+    description_2 = tk.Label(description_frame, text="Proszę wybrać jedną z metod Wspomagania decyzji", font=("Helvetica", 12))
+    description_1.pack()
+    description_2.pack()
+
     methods = {"Topsis": lambda: open_topsis_window(r, minimum, benefit_attributes_),
                "RSM": lambda: open_RSM_window(r, minimum, benefit_attributes_),
                "UTA": lambda: open_UTA_window(r, minimum, benefit_attributes_),
-               "SP_CS": open_SPCS_window}
+               "SP_CS": lambda: open_SPCS_window}
 
-    for method, action in methods.items():
-        tk.Button(root, text=method, command=action).pack()
-
+    for i, (method, action) in enumerate(methods.items()):
+        button_frame = tk.Frame(root, height=100, width=200)
+        button_frame.grid(row=i+1, column=0, padx=5, pady=5)
+        button_frame.grid_propagate(False)
+        button = tk.Button(button_frame, text=method, command=action)
+        button.config(height=6, width=80)
+        button.pack(expand=True, fill='both')
+    root.grid_rowconfigure(0, weight=10)
+    root.grid_columnconfigure(0, weight=10)
     root.mainloop()
