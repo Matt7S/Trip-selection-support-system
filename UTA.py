@@ -1,11 +1,12 @@
 from typing import List
-import math
+import extract_data
+import numpy as np
 
 def UTA(data: List[List[int]], lower_limits: List, upper_limits: List, weight_vector: List, benefit_attributes: List, num_of_compartments: List)-> List:
 
     # determining the number of alternatives and criteria
     number_of_alternatives = len(data)
-    number_of_criteria = len(data[0])
+    number_of_criteria = len(data[0])-1
 
     # Checking the correctness of sizes
     if all(len(actual_list) == number_of_criteria for actual_list in [lower_limits, upper_limits, weight_vector, benefit_attributes]):
@@ -59,26 +60,21 @@ def UTA(data: List[List[int]], lower_limits: List, upper_limits: List, weight_ve
 
         # Creation of rank
         rank = [sum(row) for row in scaled_data]
-        rank.sort()
-        return matrix_of_weights, matrix_of_func_param, scaled_data, rank
-
+        sorted_indexes = np.argsort(rank).tolist()
+        return sorted_indexes
+    else:
+        print("Incompatible input data length")
 if __name__ == "__main__":
-    data = [
-        [1, 2, 3, 4, 5],
-        [2, 3, 4, 5, 6],
-        [3, 4, 5, 6, 7],
-        [4, 5, 6, 7, 8],
-        [5, 6, 7, 8, 9]
-    ]
-    lower_limits = [1, 2, 3, 4, 5]
-    upper_limits = [5, 6, 7, 8, 9]
-    weight_vector = [0.2, 0.25, 0.1, 0.05, 0.4]
-    benefit_attributes = [1, 0, 1, 0, 1]
-    num_of_compartments = [2, 2, 1, 2, 3]
 
-    matrix_of_weights, matrix_of_func_param, scaled_data_col, rank = UTA(data, lower_limits, upper_limits, weight_vector, benefit_attributes, num_of_compartments)
-    print(matrix_of_weights, "\n",matrix_of_func_param, "\n",scaled_data_col)
+    r = extract_data.get_data_from_database()
 
+    benefit_attributes_ = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    weight_vector_ = [0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833]
+    num_of_compartments = [3,2,4,1,1,3,2,1,1,1,2,1]
+    transposed_list = list(zip(*r[3]))[1:]
+    lower_limits_ = [min(column) for column in transposed_list]
+    upper_limits_ = [max(column) for column in transposed_list]
+    rank = UTA(r[3], lower_limits_, upper_limits_, weight_vector_, benefit_attributes_,num_of_compartments)
     print(rank)
 
 
