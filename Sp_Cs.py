@@ -1,33 +1,39 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.spatial import Voronoi, voronoi_plot_2d
+from scipy.spatial import Voronoi, distance
 
-def plot_voronoi(points):
-    # Konwertuj punkty na tablicę NumPy.
-    points_array = np.array(points)
+def point_line_distance(point, line_start, line_end):
+    return np.abs(np.cross(line_end - line_start, line_start - point)) / np.linalg.norm(line_end - line_start)
 
-    # Utwórz obiekt Voronoi dla punktów.
-    vor = Voronoi(points_array)
+def voronoi_distance(points, voronoi):
+    total_params_and_distances_sum = []
 
-    # Rysuj diagram Voronoi.
-    voronoi_plot_2d(vor, show_vertices=False, line_colors='blue', line_width=2, line_alpha=0.6, point_size=5)
+    for point in points:
+        min_distance = float('inf')
+        nearest_edge_params_sum = 0
 
-    # Rysuj punkty na wykresie.
-    plt.scatter(points_array[:, 0], points_array[:, 1], c='red', marker='o')
+        for ridge in voronoi.ridge_vertices:
+            if ridge[0] != -1 and ridge[1] != -1:
+                edge_start = voronoi.vertices[ridge[0]]
+                edge_end = voronoi.vertices[ridge[1]]
+                dist = point_line_distance(point, edge_start, edge_end)
 
-    # Dodaj etykiety do punktów.
-    for i, (x, y) in enumerate(points):
-        plt.text(x, y, f'P{i+1}', ha='right', va='bottom', color='black', fontweight='bold')
+                if dist < min_distance:
+                    min_distance = dist
+                    nearest_edge_params_sum = np.linalg.norm(edge_end - edge_start)
 
-    # Dodatkowe ustawienia wykresu.
-    plt.xlabel('Oś X')
-    plt.ylabel('Oś Y')
-    plt.title('Diagram Voronoi')
-    plt.grid(True)
-    plt.show()
+        total_params_and_distances_sum.append(nearest_edge_params_sum + min_distance)
+
+    return total_params_and_distances_sum
 
 # Przykładowe punkty w przestrzeni 2D.
-sample_points = [(2, 3), (5, 8), (8, 4), (9, 7), (12, 5)]
+sample_points = np.array([(2, 3), (5, 8), (8, 4), (9, 7), (12, 5)])
 
-# Wywołaj funkcję do rysowania diagramu Voronoi.
-plot_voronoi(sample_points)
+# Tworzenie diagramu Voronoi.
+vor = Voronoi(sample_points)
+
+# Obliczanie sumy parametru krzywej Voronoi i odległości od niej dla każdego punktu.
+total_params_and_distances_sum = voronoi_distance(sample_points, vor)
+
+# Wyświetlanie wyników dla każdego punktu.
+for i, point in enumerate(sample_points):
+    print(f"Punkt {i+1}: Suma parametru krzywej Voronoi i odległości od niej - {total_params_and_distances_sum[i]:.2f}")
