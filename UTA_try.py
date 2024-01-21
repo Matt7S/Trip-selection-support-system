@@ -298,7 +298,7 @@ def open_SPCS_window():
 if __name__ == "__main__":
     r = extract_data.get_data_from_database()
 
-    benefit_attributes_ = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    benefit_attributes_ = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
     transposed_list = list(zip(*r[3]))[1:]
     minimum = [min(column) for column in transposed_list]
