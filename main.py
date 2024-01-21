@@ -53,7 +53,14 @@ def open_topsis_window(r, minimum, benefit_attributes_):
 
     new_window = tk.Toplevel(root)
     new_window.title("Topsis")
+    new_window.attributes('-fullscreen', True)
 
+    def end_fullscreen(event=None):
+        root.attributes('-fullscreen', False)
+        return "break"
+
+    new_window.bind("<Escape>", end_fullscreen)
+    
     # Ustaw rozmiar i pozycjonowanie okna
     window_width = global_window_width
     window_height = global_window_height
@@ -143,6 +150,13 @@ def open_RSM_window(r, minimum, benefit_attributes_):
 
     new_window = tk.Toplevel(root)
     new_window.title("RSM")
+    new_window.attributes('-fullscreen', True)
+
+    def end_fullscreen(event=None):
+        root.attributes('-fullscreen', False)
+        return "break"
+
+    new_window.bind("<Escape>", end_fullscreen)
 
     # Ustaw rozmiar i pozycjonowanie okna
     window_width = global_window_width
@@ -243,6 +257,13 @@ def open_UTA_window(r, minimum, benefit_attributes_):
 
     new_window = tk.Toplevel(root)
     new_window.title("UTA")
+    new_window.attributes('-fullscreen', True)
+
+    def end_fullscreen(event=None):
+        root.attributes('-fullscreen', False)
+        return "break"
+
+    new_window.bind("<Escape>", end_fullscreen)
 
     # Ustaw rozmiar i pozycjonowanie okna
     window_width = global_window_width
@@ -342,6 +363,13 @@ def open_SPCS_window():
 
     new_window = tk.Toplevel(root)
     new_window.title("SP_CS")
+    new_window.attributes('-fullscreen', True)
+    def end_fullscreen(event=None):
+        root.attributes('-fullscreen', False)
+        return "break"
+
+    new_window.bind("<Escape>", end_fullscreen)
+
     window_width = global_window_width
     window_height = global_window_height
     screen_width = new_window.winfo_screenwidth()
@@ -411,7 +439,13 @@ if __name__ == "__main__":
 
 
     root = tk.Tk()
+    root.attributes('-fullscreen', True)
     root.title("Systemy Wspomagania Decyzji")
+    def end_fullscreen(event=None):
+        root.attributes('-fullscreen', False)
+        return "break"
+
+    root.bind("<Escape>", end_fullscreen)
 
     # Ustaw rozmiar i położenie okna
     screen_width = root.winfo_screenwidth()
