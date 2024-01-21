@@ -20,9 +20,6 @@ def try_conv(vector):
 
 def open_topsis_window(r, minimum, benefit_attributes_):
 
-    def on_frame_configure(event):
-        canvas.configure(scrollregion=canvas.bbox("all"))
-
     def fun_method():
         ranking_area.delete('1.0', tk.END)  # Clear the ranking area
         lower_limits_ = []
@@ -69,27 +66,21 @@ def open_topsis_window(r, minimum, benefit_attributes_):
     # Criteria frame with canvas for scrolling
     criteria_frame = tk.LabelFrame(new_window, text="Kryteria brane pod uwagę", padx=5, pady=5)
     criteria_frame.grid(row=0, column=0, sticky="news", padx=10, pady=5)
-    canvas = tk.Canvas(criteria_frame)
-    scrollbar = tk.Scrollbar(criteria_frame, orient="vertical", command=canvas.yview)
-    scrollable_frame = tk.Frame(canvas)
-
-    canvas.configure(yscrollcommand=scrollbar.set)
-    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
 
     # Define the criteria here
     criteria_labels = r[2][1:]  # Add more criteria as needed
     criteria_entries = []
 
     # Add labels for Min, Max, Weight above the columns
-    tk.Label(scrollable_frame, text="Kryterium").grid(row=0, column=0, sticky="w", padx=5)
+    tk.Label(criteria_frame, text="Kryterium").grid(row=0, column=0, sticky="w", padx=5)
     for j, label in enumerate(["Min", "Max", "Weight[%]"]):
-        tk.Label(scrollable_frame, text=label).grid(row=0, column=j + 1, sticky="w", padx=5)
+        tk.Label(criteria_frame, text=label).grid(row=0, column=j + 1, sticky="w", padx=5)
 
     # Dynamically create the criteria entries
     for i, label in enumerate(criteria_labels):
-        tk.Label(scrollable_frame, text=label).grid(row=i + 1, column=0, sticky="w", padx=5)
+        tk.Label(criteria_frame, text=label).grid(row=i + 1, column=0, sticky="w", padx=5)
         for j in range(3):  # For Min, Max, Weight
-            entry = tk.Entry(scrollable_frame, width=8)
+            entry = tk.Entry(criteria_frame, width=8)
             entry.grid(row=i + 1, column=j + 1, padx=5, pady=2)
             # Set default value
             if j % 3 == 0:
@@ -99,11 +90,6 @@ def open_topsis_window(r, minimum, benefit_attributes_):
             elif j % 3 - 2 == 0:
                 entry.insert(tk.END, str(1 / len(minimum) * 100))
             criteria_entries.append(entry)
-
-    scrollable_frame.bind("<Configure>", on_frame_configure)
-
-    scrollbar.pack(side=tk.RIGHT, fill='y')
-    canvas.pack(side=tk.LEFT, fill="both", expand=True)
 
     # Ranking frame with scrolling text
     ranking_frame = tk.LabelFrame(new_window, text="Ranking", padx=5, pady=5)
