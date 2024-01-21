@@ -52,10 +52,11 @@ def UTA_star(data: List[List[int]], lower_limits: List, upper_limits: List, weig
         for i in range(number_of_alternatives):
             scaled_data_col = []
             for j in range(number_of_criteria):
-                if benefit_attributes[j] == 1:
-                    scaled_data_col.append(min([data[i][j] * matrix_of_func_param[j][k][0] + matrix_of_func_param[j][k][1] for k in range(len(matrix_of_func_param[j]))]))
-                else:
-                    scaled_data_col.append(max([data[i][j] * matrix_of_func_param[j][k][0] + matrix_of_func_param[j][k][1] for k in range(len(matrix_of_func_param[j]))]))
+                for k in range(len(compartments[j])-1):
+                    val = data[i][j + 1]
+                    comp = compartments[j][k]
+                    if val >= comp and val < compartments[j][k+1]:
+                        scaled_data_col.append(val * matrix_of_func_param[j][k][0] + matrix_of_func_param[j][k][1])
             scaled_data.append(scaled_data_col)
 
         # Creation of rank
@@ -68,13 +69,13 @@ if __name__ == "__main__":
 
     r = extract_data.get_data_from_database()
 
-    benefit_attributes_ = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    weight_vector_ = [0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833]
-    num_of_compartments = [3,2,4,1,1,3,2,1,1,1,2,1]
+    benefit_attributes_ = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    weight_vector_ = [0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833,0.833]
+    num_of_compartments = [3,2,2,4,1,1,3,2,1,1,1,2,1]
     transposed_list = list(zip(*r[3]))[1:]
     lower_limits_ = [min(column) for column in transposed_list]
     upper_limits_ = [max(column) for column in transposed_list]
-    rank = UTA(r[3], lower_limits_, upper_limits_, weight_vector_, benefit_attributes_,num_of_compartments)
+    rank = UTA_star(r[3], lower_limits_, upper_limits_, weight_vector_, benefit_attributes_,num_of_compartments)
     print(rank)
 
 
