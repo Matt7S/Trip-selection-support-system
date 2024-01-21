@@ -211,7 +211,7 @@ def open_RSM_window(r, minimum, benefit_attributes_):
     ranking_frame.grid_rowconfigure(0, weight=1)
 
 
-def open_UTA_window(r, minimum, benefit_attributes_):
+def open_UTA_star_window(r, minimum, benefit_attributes_):
 
     def fun_method():
         ranking_area.delete('1.0', tk.END)  # Clear the ranking area
@@ -238,7 +238,7 @@ def open_UTA_window(r, minimum, benefit_attributes_):
             sum_weight_vector = sum(weight_vector_)
             weight_vector_normalized = [el / sum_weight_vector for el in weight_vector_]
 
-            result_ = UTA.UTA(r[3], lower_limits_, upper_limits_, weight_vector_normalized,
+            result_ = UTA.UTA_star(r[3], lower_limits_, upper_limits_, weight_vector_normalized,
                                     benefit_attributes_, compartments_)
             text = ""
             for i in range(len(result_)):
@@ -255,7 +255,7 @@ def open_UTA_window(r, minimum, benefit_attributes_):
 
 
     new_window = tk.Toplevel(root)
-    new_window.title("UTA")
+    new_window.title("UTA Star")
     new_window.geometry("%dx%d" % (global_window_width, global_window_height))
     new_window.state("zoomed")
     new_window.bind("<Escape>", end_fullscreen)
@@ -484,7 +484,7 @@ if __name__ == "__main__":
 
     methods = {"Topsis": lambda: open_topsis_window(r, minimum, benefit_attributes_),
                "RSM": lambda: open_RSM_window(r, minimum, benefit_attributes_),
-               "UTA": lambda: open_UTA_window(r, minimum, benefit_attributes_),
+               "UTA Star": lambda: open_UTA_star_window(r, minimum, benefit_attributes_),
                "SP_CS": lambda: open_SPCS_window(r, minimum, benefit_attributes_)}
     
     button_frame = tk.Frame(root)
