@@ -134,8 +134,8 @@ def open_RSM_window(r, minimum, benefit_attributes_):
         if try_conv(lower_limits_) and try_conv(upper_limits_):
             lower_limits_ = list(map(float, lower_limits_))
             upper_limits_ = list(map(float, upper_limits_))
-            weight_vector_ = list(map(float, weight_vector_))
-            result_ = rsm.rsm(r[3], lower_limits_, upper_limits_, weight_vector_,benefit_attributes_)
+            weight_vector_ = list(map(float, weight_vector_)) 
+            result_ = rsm.rsm(r[3], lower_limits_, upper_limits_, benefit_attributes_)
             text = ""
             for i in range(len(result_)):
                 text += f"{i + 1}. {r[1][result_[i]][1]}, {r[1][result_[i]][2]}\n"
@@ -478,7 +478,7 @@ if __name__ == "__main__":
     width_background_image = 900
     height_background_image = 500
     background_image = Image.open("start_page_photo.png")
-    background_image = background_image.resize((width_background_image, height_background_image), Image.ANTIALIAS)
+    background_image = background_image.resize((width_background_image, height_background_image))
     background_photo = ImageTk.PhotoImage(background_image)
     background_label = tk.Label(root, image=background_photo)
     background_label.place(x=0, y=0, relwidth=1, relheight=1)

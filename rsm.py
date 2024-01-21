@@ -2,6 +2,7 @@ import extract_data
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import List
+import copy
 
 
 def is_lower(a, b, benefit_attributes):
@@ -64,47 +65,48 @@ def internal_inconsistency(A, benefit_attributes):
         return False
 
 
-def rsm(input_data: List[List[int]], lower_limits: List, upper_limits: List, weight_vector: List, benefit_attributes: List)-> List:
+def rsm(input_data: List[List[int]], lower_limits: List, upper_limits: List, benefit_attributes: List)-> List:
 
     # determining the number of criteria
     number_of_criteria = len(input_data[0]) -1
     
     # Checking the correctness of sizes
-    if all(len(actual_list) == number_of_criteria for actual_list in [lower_limits, upper_limits, weight_vector, benefit_attributes]):
+    if all(len(actual_list) == number_of_criteria for actual_list in [lower_limits, upper_limits, benefit_attributes]):
 
+        input_copy = copy.copy(input_data)
 
         A0_list = []
         A1_list = []
         i = 0
-        while i < len(input_data):
-            for j in range(len(input_data[0])-1):
+        while i < len(input_copy):
+            for j in range(len(input_copy[0])-1):
                 # maximize
                 if benefit_attributes[j] == 1:
-                    if input_data[i][j+1] < lower_limits[j]:
-                        A1_list.append(input_data[i])
-                        input_data.pop(i)
+                    if input_copy[i][j+1] < lower_limits[j]:
+                        A1_list.append(input_copy[i])
+                        input_copy.pop(i)
                         i-=1
                         break
-                    elif input_data[i][j+1] > upper_limits[j]:
-                        A0_list.append(input_data[i])
-                        input_data.pop(i)
+                    elif input_copy[i][j+1] > upper_limits[j]:
+                        A0_list.append(input_copy[i])
+                        input_copy.pop(i)
                         i-=1
                         break
                 # minimize
                 else:
-                    if input_data[i][j+1] > upper_limits[j]:
-                        A1_list.append(input_data[i])
-                        input_data.pop(i)
+                    if input_copy[i][j+1] > upper_limits[j]:
+                        A1_list.append(input_copy[i])
+                        input_copy.pop(i)
                         i-=1
                         break
-                    elif input_data[i][j+1] < lower_limits[j]:
-                        A0_list.append(input_data[i])
-                        input_data.pop(i)
+                    elif input_copy[i][j+1] < lower_limits[j]:
+                        A0_list.append(input_copy[i])
+                        input_copy.pop(i)
                         i-=1
                         break
             i+=1
             
-        data = np.array(input_data)
+        data = np.array(input_copy)
         A0 = np.array(A0_list)
         A1 = np.array(A1_list)
 
