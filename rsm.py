@@ -64,13 +64,13 @@ def internal_inconsistency(A, benefit_attributes):
         return False
 
 
-def rsm(input_data: List[List[int]], lower_limits: List, upper_limits: List, weight_vector: List, benefit_attributes: List)-> List:
+def rsm(input_data: List[List[int]], lower_limits: List, upper_limits: List, benefit_attributes: List)-> List:
 
     # determining the number of criteria
     number_of_criteria = len(input_data[0]) -1
     
     # Checking the correctness of sizes
-    if all(len(actual_list) == number_of_criteria for actual_list in [lower_limits, upper_limits, weight_vector, benefit_attributes]):
+    if all(len(actual_list) == number_of_criteria for actual_list in [lower_limits, upper_limits, benefit_attributes]):
 
 
         A0_list = []

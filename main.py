@@ -138,8 +138,8 @@ def open_RSM_window(r, minimum, benefit_attributes_):
         if try_conv(lower_limits_) and try_conv(upper_limits_):
             lower_limits_ = list(map(float, lower_limits_))
             upper_limits_ = list(map(float, upper_limits_))
-            weight_vector_ = list(map(float, weight_vector_))
-            result_ = rsm.rsm(r[3], lower_limits_, upper_limits_, weight_vector_,benefit_attributes_)
+            weight_vector_ = list(map(float, weight_vector_)) 
+            result_ = rsm.rsm(r[3], lower_limits_, upper_limits_, benefit_attributes_)
             text = ""
             for i in range(len(result_)):
                 text += f"{i + 1}. {r[1][result_[i]][1]}, {r[1][result_[i]][2]}\n"
