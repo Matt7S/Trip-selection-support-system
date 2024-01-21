@@ -2,7 +2,7 @@ from typing import List
 import extract_data
 import numpy as np
 
-def UTA(data: List[List[int]], lower_limits: List, upper_limits: List, weight_vector: List, benefit_attributes: List, num_of_compartments: List)-> List:
+def UTA_star(data: List[List[int]], lower_limits: List, upper_limits: List, weight_vector: List, benefit_attributes: List, num_of_compartments: List)-> List:
 
     # determining the number of alternatives and criteria
     number_of_alternatives = len(data)
