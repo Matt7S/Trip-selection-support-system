@@ -11,12 +11,14 @@ from PIL import Image, ImageTk
 global_window_width = 1500
 global_window_height = 900
 
+
 def try_conv(vector):
     try:
         [float(el) for el in vector]
         return True
     except ValueError:
         return False
+
 
 def open_topsis_window(r, minimum, benefit_attributes_):
 
@@ -118,6 +120,7 @@ def open_topsis_window(r, minimum, benefit_attributes_):
     ranking_frame.grid_columnconfigure(0, weight=1)
     ranking_frame.grid_rowconfigure(0, weight=1)
 
+
 def open_RSM_window(r, minimum, benefit_attributes_):
     def fun_method():
         ranking_area.delete('1.0', tk.END)  # Clear the ranking area
@@ -143,27 +146,18 @@ def open_RSM_window(r, minimum, benefit_attributes_):
             ranking_area.insert(tk.END, text)
         else:
             messagebox.showwarning("Warning", "Wrong value entered!")
-
-    new_window = tk.Toplevel(root)
-    new_window.title("RSM")
-    new_window.geometry("%dx%d" % (global_window_width, global_window_height))
-    new_window.state("zoomed")
     
 
     def end_fullscreen(event=None):
         root.attributes('-fullscreen', False)
         return "break"
 
-    new_window.bind("<Escape>", end_fullscreen)
 
-    # Ustaw rozmiar i pozycjonowanie okna
-    window_width = global_window_width
-    window_height = global_window_height
-    screen_width = new_window.winfo_screenwidth()
-    screen_height = new_window.winfo_screenheight()
-    x_coordinate = int((screen_width / 2) - (window_width / 2))
-    y_coordinate = int((screen_height / 2) - (window_height / 2))
-    new_window.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
+    new_window = tk.Toplevel(root)
+    new_window.title("RSM")
+    new_window.geometry("%dx%d" % (global_window_width, global_window_height))
+    new_window.state("zoomed")
+    new_window.bind("<Escape>", end_fullscreen)
 
     # Criteria frame with canvas for scrolling
     criteria_frame = tk.LabelFrame(new_window, text="Kryteria brane pod uwagę", padx=5, pady=5)
@@ -216,6 +210,7 @@ def open_RSM_window(r, minimum, benefit_attributes_):
     ranking_frame.grid_columnconfigure(0, weight=1)
     ranking_frame.grid_rowconfigure(0, weight=1)
 
+
 def open_UTA_window(r, minimum, benefit_attributes_):
 
     def fun_method():
@@ -252,16 +247,17 @@ def open_UTA_window(r, minimum, benefit_attributes_):
             ranking_area.insert(tk.END, text)
         else:
             messagebox.showwarning("Warning", "Wrong value entered!")
-
-    new_window = tk.Toplevel(root)
-    new_window.title("UTA")
-    new_window.geometry("%dx%d" % (global_window_width, global_window_height))
-    new_window.state("zoomed")
+    
 
     def end_fullscreen(event=None):
         root.attributes('-fullscreen', False)
         return "break"
 
+
+    new_window = tk.Toplevel(root)
+    new_window.title("UTA")
+    new_window.geometry("%dx%d" % (global_window_width, global_window_height))
+    new_window.state("zoomed")
     new_window.bind("<Escape>", end_fullscreen)
 
     # Criteria frame without scrolling
@@ -321,11 +317,11 @@ def open_UTA_window(r, minimum, benefit_attributes_):
 
 
 def open_SPCS_window(r, minimum, benefit_attributes_):
+
     # przykładowe minimalne wartości dla każdej kategorii
     min_ranges = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  
     # przykładowe maksymalne wartości dla każdej kategorii
     max_ranges = [1000, 1000, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]  
-
 
     def update_comboboxes(*args):
         selected = set(cb.get() for cb in comboboxes)
@@ -384,7 +380,6 @@ def open_SPCS_window(r, minimum, benefit_attributes_):
     new_window = tk.Toplevel(root)
     new_window.title("SP_CS")
     new_window.bind("<Escape>", end_fullscreen)
-
     #setting tkinter window size
     new_window.geometry("%dx%d" % (global_window_width, global_window_height))
     new_window.state("zoomed")
@@ -428,6 +423,7 @@ def open_SPCS_window(r, minimum, benefit_attributes_):
         max_entry = tk.Entry(criteria_frame, width=10)
         max_entry.grid(row=3*i+2, column=3, padx=5, pady=2)  # umieszczenie pola wpisywania pod etykietą "Max:"
         max_entries.append(max_entry)
+
 
     ranking_frame = tk.LabelFrame(new_window, text="Ranking", padx=5, pady=5)
     ranking_frame.grid(row=0, column=1, rowspan=2, sticky="nsew", padx=10, pady=5)
