@@ -7,6 +7,8 @@ def UTA_star(data: List[List[int]], lower_limits: List, upper_limits: List, weig
     # determining the number of alternatives and criteria
     number_of_alternatives = len(data)
     number_of_criteria = len(data[0])-1
+    if any(el <= 0 for el in num_of_compartments):
+        return 1
 
     # Checking the correctness of sizes
     if all(len(actual_list) == number_of_criteria for actual_list in [lower_limits, upper_limits, weight_vector, benefit_attributes,num_of_compartments]):
