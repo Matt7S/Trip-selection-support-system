@@ -6,6 +6,10 @@ import Sp_Cs
 import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
+from itertools import cycle
+#import webbrowser
+import random
+
 
 # window size
 global_window_width = 1500
@@ -459,6 +463,13 @@ if __name__ == "__main__":
     def end_fullscreen(event=None):
         root.attributes('-fullscreen', False)
         return "break"
+    
+    def open_website(event):
+        webbrowser.open("https://github.com/Matt7S/Trip-selection-support-system")  # Zastąp adresem URL docelowego
+
+    def change_cursor(event):
+        event.widget.config(cursor="hand2")  # Zmiana kształtu kursora na "hand2" (wskaźnik do klikania)
+
 
     r = extract_data.get_data_from_database()
 
@@ -483,6 +494,8 @@ if __name__ == "__main__":
     background_label = tk.Label(root, image=background_photo)
     background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
+    #background_label.bind("<Button-1>", open_website)  # Obsługa kliknięcia lewym przyciskiem myszy
+
     # Dodaj etykietę "Wybierz metodę"
     tk.Label(root, text="Gdzie świat poniesie cię dziś?", font=("Helvetica", 40)).pack()
 
@@ -491,21 +504,34 @@ if __name__ == "__main__":
                "UTA Star": lambda: open_UTA_star_window(r, minimum, benefit_attributes_),
                "SP_CS": lambda: open_SPCS_window(r, minimum, benefit_attributes_)}
     
-    button_frame = tk.Frame(root)
+
+    label_reminder = tk.Label(root, text="Powyżej wybierz odpowiednią metodę", font=("Helvetica", 12))
+    label_reminder.pack(side=tk.BOTTOM, pady=10)
+
+    button_frame = tk.Frame(root, background='white')
     button_frame.pack(side=tk.BOTTOM, pady=20)
+
+    # Lista kolorów tęczy
+    rainbow_colors = ["gray", "gray", "blue", "gray", "gray", "gray"]
+    color_cycle = cycle(rainbow_colors)
+
+
+    def on_enter(event):
+        next_color = next(color_cycle)
+        event.widget.config(bg=next_color, fg='white', width=21, height=2)  # Zmień kolor tła i rozmiar po najechaniu myszką
+        change_cursor(event)
+        
+
+    def on_leave(event):
+        event.widget.config(bg='black', fg='white', width=20, height=2)  # Przywróć tło i rozmiar do oryginalnych po opuszczeniu myszki
+        event.widget.config(cursor="")
+
 
     for method, action in methods.items():
         button = tk.Button(button_frame, text=method, command=action, height=2, width=20, bg='black', fg='white', font=("Helvetica",12,'bold'))
-        button.pack(side=tk.LEFT, padx=10)
+        button.pack(side=tk.LEFT, padx=30, pady=0)
+        button.bind("<Enter>", on_enter)  # Dodaj obsługę najechania myszką
+        button.bind("<Leave>", on_leave)  # Dodaj obsługę opuszczenia myszki
 
-    label_reminder = tk.Label(root, text="Poniżej wybierz odpowiednią metodę:", font=("Helvetica", 12))
-    label_reminder.pack(side=tk.BOTTOM, pady=0)
-
-    # Dodatkowa etykieta "Pamiętaj, aby dobrze wybrać"
-    label_reminder = tk.Label(root, text="Pamiętaj, aby dobrze wybrać", font=("Helvetica", 12))
-    label_reminder.pack(side=tk.BOTTOM, pady=0)
-
-    #for method, action in methods.items():
-    #    tk.Button(root, text=method, command=action).pack()
 
     root.mainloop()
