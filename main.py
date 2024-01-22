@@ -240,11 +240,15 @@ def open_UTA_star_window(r, minimum, benefit_attributes_):
 
             result_ = UTA.UTA_star(r[3], lower_limits_, upper_limits_, weight_vector_normalized,
                                     benefit_attributes_, compartments_)
-            text = ""
-            for i in range(len(result_)):
-                text += f"{i + 1}. {r[1][result_[i]][1]}, {r[1][result_[i]][2]}\n"
-
-            ranking_area.insert(tk.END, text)
+            if result_ == None:
+                ranking_area.insert(tk.END, "Niestety twoje kryteria są zbyt wąskie.")
+            if result_ == 1:
+                ranking_area.insert(tk.END, "Liczba przedziałów musi być dodatnia!")
+            else:
+                text = ""
+                for i in range(len(result_)):
+                    text += f"{i + 1}. {r[1][result_[i]][1]}, {r[1][result_[i]][2]}\n"
+                ranking_area.insert(tk.END, text)
         else:
             messagebox.showwarning("Warning", "Wrong value entered!")
     
