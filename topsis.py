@@ -1,7 +1,9 @@
 from typing import List
 import math
+import copy
 
-def topsis(data: List[List[int]], lower_limits: List, upper_limits: List, weight_vector: List, benefit_attributes: List)-> List:
+
+def topsis(data: List[List[float]], lower_limits: List, upper_limits: List, weight_vector: List, benefit_attributes: List)-> List:
 
 
     # determining the number of alternatives and criteria
@@ -44,7 +46,7 @@ def topsis(data: List[List[int]], lower_limits: List, upper_limits: List, weight
         # Creating an ideal and anti-ideal vector
         transposed_list = list(zip(*standardized_decision_matrix))
         ideal_vector = [min(column) for column in transposed_list]
-        anti_ideal_vector = [max(column) for column in transposed_list]
+        anti_ideal_vector = nadir(copy.deepcopy(standardized_decision_matrix))
 
         # Distance calculation
         distance_from_ideal = []
@@ -69,3 +71,38 @@ def topsis(data: List[List[int]], lower_limits: List, upper_limits: List, weight
     else:
         print("Incompatible input data length")
 
+
+def nadir(X: List[List[float]]) -> List[List[float]]:
+    P_X = []
+    i = 0
+    while i < len(X):
+        Y = X[i]
+        j = i + 1
+        while j < len(X):
+            X_j = X[j]
+            if all(el1 <= el2 for el1, el2 in zip(Y, X_j)):
+                del X[j]
+            elif all(el1 <= el2 for el1, el2 in zip(X_j, Y)):
+                Y = X_j
+                del X[i]
+            else:
+                j += 1
+        if len(P_X) == 0:
+            P_X.append(Y)
+        else:
+            if P_X.count(Y) == 0:
+                P_X.append(Y)
+        k = 1
+        while k < len(X):
+            if all(el1 <= el2 for el1, el2 in zip(Y, X[k])):
+                del X[k]
+            else:
+                k += 1
+        if Y in X:
+            del X[X.index(Y)]
+        if len(X) == 1:
+            P_X.append(X[0])
+            break
+    P_X_trans = list(zip(*P_X))
+    point_nadir = [max(col) for col in P_X_trans]
+    return point_nadir
