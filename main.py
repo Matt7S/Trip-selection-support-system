@@ -130,19 +130,21 @@ def open_RSM_window(r, minimum, benefit_attributes_):
         ranking_area.delete('1.0', tk.END)  # Clear the ranking area
         lower_limits_ = []
         upper_limits_ = []
-        weight_vector_ = []
+        is_active_ = []
 
         for i in range(len(criteria_entries)):
-            if i % 2 == 0:
+            if i % 3 == 0:
                 lower_limits_.append(float(criteria_entries[i].get()))
-            elif i % 2 - 1 == 0:
+            elif i % 3 - 1 == 0:
                 upper_limits_.append(float(criteria_entries[i].get()))
+            elif i % 3 - 2 == 0:
+                is_active_.append(float(criteria_entries[i].get()))
 
         if try_conv(lower_limits_) and try_conv(upper_limits_):
             lower_limits_ = list(map(float, lower_limits_))
             upper_limits_ = list(map(float, upper_limits_))
-            weight_vector_ = list(map(float, weight_vector_)) 
-            result_ = rsm.rsm(r[3], lower_limits_, upper_limits_, benefit_attributes_)
+            is_active_ = list(map(float, is_active_)) 
+            result_ = rsm.rsm(r[3], lower_limits_, upper_limits_, is_active_, benefit_attributes_)
             text = ""
             for i in range(len(result_)):
                 text += f"{i + 1}. {r[1][result_[i]][1]}, {r[1][result_[i]][2]}\n"
@@ -188,7 +190,12 @@ def open_RSM_window(r, minimum, benefit_attributes_):
             elif j % 2 - 1 == 0:
                 entry.insert(tk.END, str(maximum[i]))
             criteria_entries.append(entry)
-
+        
+        # criteria checkBox
+        var = tk.IntVar()
+        entry = tk.Checkbutton(criteria_frame, variable=var, onvalue=1, offvalue=0)
+        entry.grid(row=i+1, column=3)
+        criteria_entries.append(var)
 
     # Ranking frame with scrolling text
     ranking_frame = tk.LabelFrame(new_window, text="Ranking", padx=5, pady=5)
