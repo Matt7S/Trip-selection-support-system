@@ -5,7 +5,6 @@ import copy
 
 def topsis(data: List[List[float]], lower_limits: List, upper_limits: List, weight_vector: List, benefit_attributes: List)-> List:
 
-
     # determining the number of alternatives and criteria
     number_of_alternatives = len(data)
     number_of_criteria = len(data[0]) -1
