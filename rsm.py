@@ -65,7 +65,7 @@ def internal_inconsistency(A, benefit_attributes):
         return False
 
 
-def rsm(input_data: List[List[int]], lower_limits: List, upper_limits: List, benefit_attributes: List)-> List:
+def rsm(input_data: List[List[int]], lower_limits: List, upper_limits: List, is_active: List, benefit_attributes: List)-> List:
 
     # determining the number of criteria
     number_of_criteria = len(input_data[0]) -1
@@ -116,6 +116,12 @@ def rsm(input_data: List[List[int]], lower_limits: List, upper_limits: List, ben
         if A1.size == 0:
             A1 = np.array([[-1] + [lower_limits[i] if benefit_attributes[i]==1 else upper_limits[i] for i in range(len(benefit_attributes))]])
 
+        for i in range(len(is_active), 0, -1):
+            if is_active[i-1] == 0:
+                data = np.delete(data, i, axis=1)
+                A0 = np.delete(A0, i, axis=1)
+                A1 = np.delete(A1, i, axis=1)
+
         while not internal_inconsistency(A0, benefit_attributes):
             _, A0 = filtration_of_dominated(A0, benefit_attributes)
 
@@ -136,7 +142,6 @@ def rsm(input_data: List[List[int]], lower_limits: List, upper_limits: List, ben
 
         P = np.array(P)
         w = P / np.sum(P)  
-
 
         f = []
         for i in range(data.shape[0]):
