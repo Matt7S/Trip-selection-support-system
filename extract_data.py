@@ -16,7 +16,7 @@ def get_data_from_database(show_files_head=False):
     # Get the current working directory to construct the file path
     current_working_directory = os.getcwd()
 
-    # Define the file name. Change this to your actual file name
+    # Define the file name. Change this to actual file name
     file_name = "example_base.xlsx"
 
     # Construct the full file path
@@ -28,6 +28,7 @@ def get_data_from_database(show_files_head=False):
         df_data = pd.read_excel(file_path, sheet_name="data")
 
         # Load the Excel file into a pandas DataFrame for the "data_info" sheet
+        # an easy way to check whether data is well-structured
         df_data_info = pd.read_excel(file_path, sheet_name="data_info")
 
         # Optionally, print the first few rows of both DataFrames to check the data

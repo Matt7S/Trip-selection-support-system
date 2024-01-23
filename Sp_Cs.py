@@ -185,9 +185,9 @@ def sp_cs(input_data, lower_limits, upper_limits, criteria_idxs, benefit_attribu
             if (input_data[row_idx,cri_idx+1] >= lower_limits[i] and input_data[row_idx,cri_idx+1] <= upper_limits[i]):
                 if benefit_attributes[cri_idx] == 1:
                     tmp_tab.append(input_data[row_idx,cri_idx+1])
-
                 else:
                     tmp_tab.append(max_values[cri_idx] - input_data[row_idx, cri_idx+1])
+
 
             if len(tmp_tab) == 4:
                 data_after_limits.append(tmp_tab)
@@ -228,11 +228,11 @@ def test_with_limits():
 
 def test_with_database():
     r = get_data_from_database()
-    benefit_attributes = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    benefit_attributes = [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     cri_idxs = [2, 3, 4]
     transposed_list = list(zip(*r[3]))[1:]
     minimum = [2,2,2]
-    maximum = [100, 100, 100]
+    maximum = [10000, 10000, 100]
     output = sp_cs(r[3], minimum, maximum, cri_idxs, benefit_attributes)
     print(output)
 
