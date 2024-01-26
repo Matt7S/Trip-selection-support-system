@@ -3,6 +3,7 @@ import topsis
 import rsm
 import UTA
 import Sp_Cs
+import AHP
 import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
@@ -472,6 +473,185 @@ def open_SPCS_window(r, minimum, benefit_attributes_):
     update_comboboxes()  # Update comboboxes initially
     
 
+def open_AHP_window(r, minimum, benefit_attributes_):
+    # Sample minimum values for each category
+    min_ranges = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  
+    # Sample maximum values for each category
+    max_ranges = [650, 2400, 11000, 95, 95, 91, 100, 95, 97, 99, 95, 100, 98] 
+
+    def update_comboboxes_comparison(*args):
+        pass
+
+    def update_comboboxes_criteria(*args):
+        # This function updates the available options in comboboxes based on user selections.
+        selected = set(cb.get() for cb in comboboxes_criteria)
+        for cb in comboboxes_criteria:
+            current = cb.get()
+            cb['values'] = [c for c in criteria_labels if c not in selected or c == current]
+
+        # Update range labels for the selected category
+        for i, cb in enumerate(comboboxes_criteria):
+            selected_category_index = criteria_labels.index(cb.get()) if cb.get() in criteria_labels else -1
+            if selected_category_index >= 0:
+                min_labels[i].config(text="Min: " + str(minimum[selected_category_index]))
+                max_labels[i].config(text="Max: " + str(maximum[selected_category_index]))
+            else:
+                min_labels[i].config(text="Min:")
+                max_labels[i].config(text="Max:")
+
+    
+    def fun_method():
+        # This function is called when the "Generuj Ranking" button is clicked.
+        ranking_area.delete('1.0', tk.END)
+        criteria_idxs_ = []
+        lower_limits_ = []
+        upper_limits_ = []
+        criteria_comparison_ = []
+
+        for box in comparison_values:
+            if (len(box.get()) == 1):
+                criteria_comparison_.append(int(box.get()))
+            elif (len(box.get()) > 1):
+                criteria_comparison_.append(1/int(box.get()[-1]))
+            else:
+                print('error')
+
+        for i, cb in enumerate(comboboxes_criteria):
+            selected_category = cb.get()
+            if selected_category in criteria_labels:
+                index = criteria_labels.index(selected_category)
+                lower_limit = float(min_entries[i].get())
+                upper_limit = float(max_entries[i].get())
+                criteria_idxs_.append(index)
+                lower_limits_.append(lower_limit)
+                upper_limits_.append(upper_limit)
+
+        if try_conv(lower_limits_) and try_conv(upper_limits_):
+            # Assuming that weight_vector_ and benefit_attributes_ are properly defined
+            result_ = AHP.ahp(r[3], lower_limits_, upper_limits_, criteria_idxs_, criteria_comparison_, benefit_attributes_)
+            if result_ is None:
+                ranking_area.insert(tk.END, "Niestety twoje kryteria są zbyt wąskie lub podałeś niespójne porównanie kryteriów")
+            else:
+                text = ""
+                for i in range(len(result_)):
+                    text += f"{i + 1}. {r[1][result_[i]][1]}, {r[1][result_[i]][2]}\n"
+                ranking_area.insert(tk.END, text)
+        else:
+            messagebox.showwarning("Warning", "Wrong value entered!")
+
+    
+    def end_fullscreen(event=None):
+        # This function is called when the Escape key is pressed.
+        # It exits full-screen mode for the tkinter window.
+        root.attributes('-fullscreen', False)
+        return "break"
+
+    # Create a new tkinter window
+    new_window = tk.Toplevel(root)
+    new_window.title("AHP")
+    new_window.bind("<Escape>", end_fullscreen)
+    # Set window size and fullscreen state
+    new_window.geometry("%dx%d" % (global_window_width, global_window_height))
+    new_window.state("zoomed")
+
+    # Create a label frame for criteria selection
+    criteria_frame = tk.LabelFrame(new_window, text="Kryteria brane pod uwagę", padx=5, pady=5)
+    criteria_frame.grid(row=0, column=0, sticky="news", padx=10, pady=5)
+
+    # Create a label frame for criteria comparison
+    criteria_comparison_frame = tk.LabelFrame(new_window, text="Porównanie kryteriów (wiersz/kolumna)", padx=5, pady=5)
+    criteria_comparison_frame.grid(row=1, column=0, sticky="news", padx=10, pady=5)
+
+    # Get criteria labels from input data
+    criteria_labels = r[2][1:]
+    comboboxes_criteria = []
+    min_entries = []
+    max_entries = []
+
+    # Get criteria comparison values
+    comparison_labels = [i for i in range(9,0,-1)] + ["1/"+str(i) for i in range(2,10)]
+    comboboxes_comparison = []
+    comparison_values = []
+
+    # Create labels for minimum and maximum range
+    min_labels = []
+    max_labels = []
+
+    for i in range(5):
+        # Create a label for selecting a category
+        category_label = tk.Label(criteria_frame, text="Wybierz kategorię (K"+str(i+1)+"):")
+        category_label.grid(row=3*i, column=1, padx=5, pady=2)
+
+        # Create labels for minimum and maximum range values
+        min_label = tk.Label(criteria_frame, text="Min:")
+        min_label.grid(row=3*i, column=2)
+        min_labels.append(min_label)
+
+        max_label = tk.Label(criteria_frame, text="Max:")
+        max_label.grid(row=3*i, column=3)
+        max_labels.append(max_label)
+
+        # Create comboboxes and entry fields for user input
+        cb = ttk.Combobox(criteria_frame, values=criteria_labels, state="readonly")
+        cb.grid(row=3*i+1, column=1, padx=5, pady=2)
+        cb.bind('<<ComboboxSelected>>', update_comboboxes_criteria)
+        comboboxes_criteria.append(cb)
+
+        min_entry = tk.Entry(criteria_frame, width=10)
+        min_entry.grid(row=3*i+1, column=2, padx=5, pady=2)
+        min_entries.append(min_entry)
+
+        max_entry = tk.Entry(criteria_frame, width=10)
+        max_entry.grid(row=3*i+1, column=3, padx=5, pady=2)
+        max_entries.append(max_entry)
+
+        # Create category tags 
+        if (i != 0):
+            category_label = tk.Label(criteria_comparison_frame, text="K"+str(6-i))
+            category_label.grid(row=0, column=i+1, padx=5, pady=2)
+
+        if (i < 4):
+            category_label = tk.Label(criteria_comparison_frame, text="K"+str(i+1))
+            category_label.grid(row=i+1, column=0, padx=5, pady=2)
+
+    for i in range(5):
+        for j in range(i+1, 5):
+            comparison_values.append(tk.StringVar())
+            cb = ttk.Combobox(criteria_comparison_frame, values=comparison_labels, width=5, state="readonly", textvariable=comparison_values[-1])
+            cb.grid(row=i+1, column=6-j, padx=3, pady=2)
+            cb.bind('<<ComboboxSelected>>', update_comboboxes_comparison)
+            comboboxes_comparison.append(cb)
+
+    # Create a label frame for displaying the ranking
+    ranking_frame = tk.LabelFrame(new_window, text="Ranking", padx=5, pady=5)
+    ranking_frame.grid(row=0, column=1, rowspan=3, sticky="nsew", padx=10, pady=5)
+    ranking_area = tk.Text(ranking_frame, wrap=tk.WORD)
+    ranking_area.grid(row=0, column=0, sticky="nsew")
+
+    # Create a scrollbar for the ranking area
+    scrollbar_ranking = tk.Scrollbar(ranking_frame, command=ranking_area.yview)
+    ranking_area['yscrollcommand'] = scrollbar_ranking.set
+    scrollbar_ranking.grid(row=0, column=1, sticky='nsew')
+
+    # Create buttons for generating ranking and returning to the main window
+    button_frame = tk.Frame(new_window)
+    button_frame.grid(row=2, column=0, padx=5, pady=5)
+
+    generate_button = tk.Button(button_frame, text="Generuj Ranking", command=fun_method)
+    generate_button.grid(row=0, column=0, pady=5)
+
+    return_button = tk.Button(button_frame, text="Powrót do okna głównego", command=new_window.destroy)
+    return_button.grid(row=0, column=1, pady=5)
+
+    # Configure grid column and row weights for resizing
+    new_window.grid_columnconfigure(1, weight=1)
+    new_window.grid_rowconfigure(1, weight=1)
+    ranking_frame.grid_columnconfigure(0, weight=1)
+    ranking_frame.grid_rowconfigure(0, weight=1)
+
+    update_comboboxes_criteria()  # Update comboboxes initially
+
+
 if __name__ == "__main__":
     # Function to exit fullscreen mode
     def end_fullscreen(event=None):
@@ -519,7 +699,8 @@ if __name__ == "__main__":
         "Topsis": lambda: open_topsis_window(r, minimum, benefit_attributes_),
         "RSM": lambda: open_RSM_window(r, minimum, benefit_attributes_),
         "UTA Star": lambda: open_UTA_star_window(r, minimum, benefit_attributes_),
-        "SP_CS": lambda: open_SPCS_window(r, minimum, benefit_attributes_)
+        "SP_CS": lambda: open_SPCS_window(r, minimum, benefit_attributes_),
+        "AHP": lambda: open_AHP_window(r, minimum, benefit_attributes_)
     }
 
     # Create a label as a reminder for method selection
